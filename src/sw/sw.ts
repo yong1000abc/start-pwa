@@ -1,12 +1,13 @@
 export type {};
 declare const self: ServiceWorkerGlobalScope;
 
-const cacheName = '1.0.0';
+const cacheName = 'v8';
 
 const appShellFiles = [
   '/',
   '/index.js',
   '/index.css',
+  '/favicon.ico'
 ];
 
 self.addEventListener('install', (e) => {
@@ -23,8 +24,12 @@ self.addEventListener('fetch', (e) => {
     const r = await caches.match(e.request);
     if (r) { return r; }
     const response = await fetch(e.request);
-    const cache = await caches.open(cacheName);
-    cache.put(e.request, response.clone());
+
+    if (!e.request.url.startsWith('chrome-extension')) {
+      const cache = await caches.open(cacheName);
+      cache.put(e.request, response.clone());
+    }
+
     return response;
   })());
 });

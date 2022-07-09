@@ -3,13 +3,14 @@ import styled from 'styled-components';
 
 export function SampleView() {
   const {samples} = useSamples();
-  return (
+  return <>
+    <div>7</div>
     <List>
       {samples.map((sample, idx) => (
         <ListItem key={idx}>{sample.name}</ListItem>
       ))}
     </List>
-  );
+  </>;
 }
 
 const List = styled.ul`
