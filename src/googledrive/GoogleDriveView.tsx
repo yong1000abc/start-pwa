@@ -63,19 +63,28 @@ const TextArea = styled.textarea`
 `;
 
 const useGoogleDriveView = () => {
-  const {canSearch, searchFiles, isSignIn, signOut, fileListState} = useGoogleDriveApi();
+  const {canSearch, searchFiles, isSignIn, signOut, fileListState, fetchFileContents} = useGoogleDriveApi();
   const [fileName, setFileName] = useState<string>('');
   const [fileSize, setFileSize] = useState<number>(0);
   const [fileHash, setFileHash] = useState<string>('');
   const [fileContents, setFileContents] = useState<string>('');
 
   const onClickFile = async (driveFile: DriveFile) => {
-    const link = document.createElement('a');
-    link.setAttribute('href', driveFile.webContentLink);
-    link.setAttribute('download', driveFile.name);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const result = await fetchFileContents(driveFile.id);
+    if (result.isGZip) {
+      setFileContents('');
+      setFileHash('');
+      const link = document.createElement('a');
+      link.setAttribute('href', driveFile.webContentLink);
+      link.setAttribute('download', driveFile.name);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      const _hash = await digestMessage(result.contents);
+      setFileContents(result.contents);
+      setFileHash(_hash);
+    }
 
     setFileName(driveFile.name);
     setFileSize(driveFile.size);

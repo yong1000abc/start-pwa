@@ -37,6 +37,20 @@ export const useGoogleDriveApi = () => {
     })();
   }, [gapi]);
 
+  const fetchFileContents = async (fileId: string) => {
+    try {
+      const res = await gapi.client.drive.files.get({
+        fileId: fileId,
+        alt: 'media',
+      });
+      const isGZip = res.headers['content-encoding'] === 'gzip';
+      return {contents: isGZip ? '파일 사이즈가 커서 다운로드로 대체합니다.' : res.body, isGZip};
+    } catch (err) {
+      console.error(err);
+      return {contents: '', isGZip: false}; 
+    }
+  };
+
   const searchFiles = useCallback(() => {
     if (!isFetched || !tokenClient) {
       return;
@@ -66,5 +80,12 @@ export const useGoogleDriveApi = () => {
     isSignIn,
     signOut,
     fileListState,
+    fetchFileContents,
   };
 };
+function decodeUnicode(unicodeString: string) {
+	var r = /\\u([\d\w]{4})/gi;
+	unicodeString = unicodeString.replace(r, function (match, grp) {
+	    return String.fromCharCode(parseInt(grp, 16)); } );
+	return unescape(unicodeString);
+}
