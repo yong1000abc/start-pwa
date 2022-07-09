@@ -1,5 +1,6 @@
 import {Link, Route, Routes} from 'react-router-dom';
 import {FileSystemView} from 'src/filesystem/view/FileSystemView';
+import {GoogleDriveView} from 'src/googledrive/GoogleDriveView';
 import {MenuView} from 'src/main/view/MenuView';
 import styled from 'styled-components';
 
@@ -12,6 +13,7 @@ export function MainView() {
       <Routes>
         <Route path="/" element={<MenuView />} />
         <Route path="/filesystem" element={<FileSystemView />} />
+        <Route path="/googledrive" element={<GoogleDriveView />} />
       </Routes>
     </div>
   );

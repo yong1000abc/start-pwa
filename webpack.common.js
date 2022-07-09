@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const {version: appVersion} = require('./package.json');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = (option) => {
   if (!option) option = {};
@@ -53,7 +54,8 @@ module.exports = (option) => {
       new MiniCssExtractPlugin(),
       new webpack.EnvironmentPlugin({
         version: appVersion
-      }),  
+      }),
+      new Dotenv(),
     ],
   };
 };
