@@ -37,6 +37,9 @@ module.exports = {
     'semi': [
       'error',
       'always'
-    ]
+    ],
+    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-var-requires': 'off',
+    'react/react-in-jsx-scope': 'off',
   }
 };
