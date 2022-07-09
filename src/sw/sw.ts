@@ -6,6 +6,7 @@ declare const self: ServiceWorkerGlobalScope;
 const cacheName = BuildEnv.version;
 
 const appShellFiles = [
+  '/',
   '/index.js',
   '/index.css',
   '/favicon.ico'
