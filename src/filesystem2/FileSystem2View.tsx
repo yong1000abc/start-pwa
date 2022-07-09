@@ -1,4 +1,5 @@
 import {useState, ChangeEvent, useEffect, useRef} from 'react';
+import {digestMessage} from 'src/digestMessage';
 import styled from 'styled-components';
 
 export function FileSystem2View() {
@@ -6,10 +7,6 @@ export function FileSystem2View() {
   const [fileSize, setFileSize] = useState<number>(0);
   const [fileHash, setFileHash] = useState<string>('');
   const [fileContents, setFileContents] = useState<string>('');
-
-  const onChangeInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setFileContents(e.target.value);
-  };
 
   const onChangeFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -25,7 +22,6 @@ export function FileSystem2View() {
 
   const mountFile = async (file: File) => {
     const contents = await file.text();
-    // console.log(file, file.name, file.size, await digestMessage(contents));
     const _fileHash = await digestMessage(contents);
     setFileHash(_fileHash);
     setFileName(file.name);
@@ -61,7 +57,7 @@ export function FileSystem2View() {
         </div>
         <div>{fileName} / {fileSize}</div>
         <div>{fileHash}</div>
-        <TextArea onChange={onChangeInput} value={fileContents} />
+        <TextArea readOnly value={fileContents} />
         <EditorFooter>
           <button disabled={!fileName} onClick={unmountFile}>언마운트</button>
         </EditorFooter>
@@ -98,11 +94,3 @@ const EditorFooter = styled.div`
 const HiddenInput = styled.input`
   display: none;
 `;
-
-async function digestMessage(message: string) {
-  const msgUint8 = new TextEncoder().encode(message);                           // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);           // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer));                     // convert buffer to byte array
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-  return hashHex;
-}

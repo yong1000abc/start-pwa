@@ -1,9 +1,14 @@
+import styled from 'styled-components';
 import {DriveFile} from './DriveFile';
 
-export function DriveFileListItem({driveFile}: {driveFile: DriveFile}) {
+export function DriveFileListItem({driveFile, onClick}: {driveFile: DriveFile; onClick: (driveFile: DriveFile) => void;}) {
   return (
-    <a href={driveFile.webContentLink} target={'_blank'} rel="noreferrer">
+    <Container onClick={() => onClick(driveFile)}>
       {driveFile.name}
-    </a>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  cursor: pointer;
+`;

@@ -10,7 +10,7 @@ const DISCOVERY_DOC =
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+const SCOPES = 'https://www.googleapis.com/auth/drive';
 
 type FileListState = {
   status: 'loading' | 'error' | 'fetched';
@@ -27,8 +27,8 @@ export const useGoogleDriveApi = () => {
     (async () => {
       try {
         const res = await gapi.client.drive.files.list({
-          pageSize: 10,
-          fields: 'files(id, name, webContentLink)',
+          pageSize: 30,
+          fields: 'files(id, name, size, webContentLink)',
         });
         setFileListState({status: 'fetched', list: res.result.files});
       } catch (err) {
