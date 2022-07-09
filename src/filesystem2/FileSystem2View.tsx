@@ -3,6 +3,8 @@ import styled from 'styled-components';
 
 export function FileSystem2View() {
   const [fileName, setFileName] = useState<string>('');
+  const [fileSize, setFileSize] = useState<number>(0);
+  const [fileHash, setFileHash] = useState<string>('');
   const [fileContents, setFileContents] = useState<string>('');
 
   const onChangeInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -23,8 +25,11 @@ export function FileSystem2View() {
 
   const mountFile = async (file: File) => {
     const contents = await file.text();
-    console.log(file, file.name, file.size, await digestMessage(contents));
+    // console.log(file, file.name, file.size, await digestMessage(contents));
+    const _fileHash = await digestMessage(contents);
+    setFileHash(_fileHash);
     setFileName(file.name);
+    setFileSize(file.size);
     setFileContents(contents);
   };
 
@@ -32,24 +37,30 @@ export function FileSystem2View() {
     if (inputRef.current) {
       inputRef.current.value = '';
     }
+    setFileHash('');
     setFileName('');
+    setFileSize(0);
     setFileContents('');
   };
 
   useEffect(() => {
-    inputRef.current?.click();
+    showFileSelector();
   }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const showFileSelector = () => {
+    inputRef.current?.click();
+  };
 
   return (
     <Container>
       <EditorContainer>
         <div>
-          텍스트 파일 마운트
-          <input ref={inputRef} type={'file'} onChange={onChangeFile} />
-          {fileName}
+          <button onClick={showFileSelector}>텍스트 파일 선택</button>
+          <HiddenInput ref={inputRef} type={'file'} onChange={onChangeFile} />
         </div>
+        <div>{fileName} / {fileSize}</div>
+        <div>{fileHash}</div>
         <TextArea onChange={onChangeInput} value={fileContents} />
         <EditorFooter>
           <button disabled={!fileName} onClick={unmountFile}>언마운트</button>
@@ -82,6 +93,10 @@ const EditorFooter = styled.div`
   width: 100%;
   display: flex;
   justify-content: end;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
 `;
 
 async function digestMessage(message: string) {
