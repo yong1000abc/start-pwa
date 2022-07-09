@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpack = require('webpack');
+const {version: appVersion} = require('./package.json');
 
 module.exports = (option) => {
   if (!option) option = {};
@@ -44,8 +46,14 @@ module.exports = (option) => {
         template: path.resolve(__dirname, 'src', 'index.html'),
         filename: 'index.html',
         inject: false,
+        templateParameters: {
+          version: appVersion,
+        },
       }),
       new MiniCssExtractPlugin(),
+      new webpack.EnvironmentPlugin({
+        version: appVersion
+      }),  
     ],
   };
 };

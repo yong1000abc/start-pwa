@@ -1,10 +1,11 @@
+import {BuildEnv} from 'src/BuildEnv';
 import {useSamples} from 'src/sample/hook/useSamples';
 import styled from 'styled-components';
 
 export function SampleView() {
   const {samples} = useSamples();
   return <>
-    <div>7</div>
+    <div>{BuildEnv.version}</div>
     <List>
       {samples.map((sample, idx) => (
         <ListItem key={idx}>{sample.name}</ListItem>

@@ -1,11 +1,12 @@
 import {createRoot} from 'react-dom/client';
 import {Provider} from 'react-redux';
 import {BrowserRouter} from 'react-router-dom';
+import {BuildEnv} from 'src/BuildEnv';
 import {SampleView} from 'src/sample/view/SampleView';
 import {store} from 'src/store/store';
 
 if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?7');
+  navigator.serviceWorker.register(`./sw.js?${BuildEnv.version}`);
 }
 
 const container = document.getElementById('root');

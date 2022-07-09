@@ -1,10 +1,11 @@
+import {BuildEnv} from 'src/BuildEnv';
+
 export type {};
 declare const self: ServiceWorkerGlobalScope;
 
-const cacheName = 'v8';
+const cacheName = BuildEnv.version;
 
 const appShellFiles = [
-  '/',
   '/index.js',
   '/index.css',
   '/favicon.ico'
@@ -25,10 +26,10 @@ self.addEventListener('fetch', (e) => {
     if (r) { return r; }
     const response = await fetch(e.request);
 
-    if (!e.request.url.startsWith('chrome-extension')) {
-      const cache = await caches.open(cacheName);
-      cache.put(e.request, response.clone());
-    }
+    // if (!e.request.url.startsWith('chrome-extension')) {
+    //   const cache = await caches.open(cacheName);
+    //   cache.put(e.request, response.clone());
+    // }
 
     return response;
   })());
