@@ -9,7 +9,8 @@ const appShellFiles = [
   '/',
   '/index.js',
   '/index.css',
-  '/favicon.ico'
+  '/favicon.ico',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (e) => {
