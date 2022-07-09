@@ -1,6 +1,6 @@
 import {createRoot} from 'react-dom/client';
 import {Provider} from 'react-redux';
-import {BrowserRouter} from 'react-router-dom';
+import {HashRouter} from 'react-router-dom';
 import {BuildEnv} from 'src/BuildEnv';
 import {MainView} from 'src/main/view/MainView';
 import {store} from 'src/store/store';
@@ -12,10 +12,10 @@ if('serviceWorker' in navigator) {
 const container = document.getElementById('root');
 if (container) {
   createRoot(container).render(
-    <BrowserRouter>
+    <HashRouter>
       <Provider store={store}>
         <MainView/>
       </Provider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
