@@ -55,7 +55,7 @@ module.exports = (option) => {
       new webpack.EnvironmentPlugin({
         version: appVersion
       }),
-      new Dotenv(),
+      new Dotenv({ systemvars: true }),
     ],
   };
 };
