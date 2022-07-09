@@ -10,9 +10,8 @@ export const store = configureStore({
 /* Types */
 export type AppDispatch = typeof store.dispatch;
 export type ReduxState = ReturnType<typeof rootReducer>;
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 export type TypedDispatch = ThunkDispatch<ReduxState, any, AnyAction>;
-/* eslint-enable */
 export type TypedThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   ReduxState,
