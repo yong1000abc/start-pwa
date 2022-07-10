@@ -24,7 +24,8 @@ self.addEventListener('fetch', (e) => {
   e.respondWith((async () => {
     const r = await caches.match(e.request);
     if (r) { return r; }
-    return await fetch(e.request);
+    const response = await fetch(e.request);
+    return response;
   })());
 });
 
@@ -35,4 +36,10 @@ self.addEventListener('activate', (e) => {
       return caches.delete(key);
     }));
   }));
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
