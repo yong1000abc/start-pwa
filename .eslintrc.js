@@ -48,5 +48,6 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 'off',
     'styled-components-a11y/click-events-have-key-events': 'off',
     'styled-components-a11y/no-static-element-interactions': 'off',
+    'no-case-declarations': 'off',
   }
 };

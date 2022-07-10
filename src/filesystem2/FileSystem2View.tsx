@@ -1,12 +1,15 @@
 import {useState, ChangeEvent, useEffect, useRef} from 'react';
 import {digestMessage} from 'src/digestMessage';
 import styled from 'styled-components';
+import JSZip from 'jszip';
 
 export function FileSystem2View() {
   const [fileName, setFileName] = useState<string>('');
   const [fileSize, setFileSize] = useState<number>(0);
   const [fileHash, setFileHash] = useState<string>('');
   const [fileContents, setFileContents] = useState<string>('');
+  const [zip, setZip] = useState<JSZip>();
+  const [zipFileNames, setZipFileNames] = useState<string[]>([]);
 
   const onChangeFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -21,18 +24,55 @@ export function FileSystem2View() {
   };
 
   const mountFile = async (file: File) => {
-    const contents = await file.text();
-    const _fileHash = await digestMessage(contents);
-    setFileHash(_fileHash);
-    setFileName(file.name);
-    setFileSize(file.size);
-    setFileContents(contents);
+    unmountFile(false);
+
+    switch (file.type) {
+    case 'text/plain':
+      const contents = await file.text();
+      const _fileHash = await digestMessage(contents);
+      setFileHash(_fileHash);
+      setFileName(file.name);
+      setFileSize(file.size);
+      setFileContents(contents);
+      break;
+    case 'application/zip':
+      new JSZip().loadAsync(file)
+        .then(async function(_zip) {
+          const zipFiles: JSZip.JSZipObject[] = [];
+          _zip.forEach((relativePath, file) => {
+            if (!file.name.startsWith('__MACOSX/')) {
+              zipFiles.push(file);
+            }
+          });
+          zipFiles.sort((a, b) => {
+            return a.date.getTime() - b.date.getTime();
+          });
+          const _zipFileNames = zipFiles.map(file => file.name);
+          setZip(_zip);
+          setZipFileNames(_zipFileNames);
+          mountZipFile(_zipFileNames[0]);
+        });
+      break;
+    }
   };
 
-  const unmountFile = () => {
-    if (inputRef.current) {
+  const mountZipFile = async (_zipFileName: string) => {
+    const _contents = await zip?.file(_zipFileName)?.async('string');
+    if (_contents) {
+      const _fileHash = await digestMessage(_contents);
+      setFileHash(_fileHash);
+      setFileName(_zipFileName);
+      setFileSize(_contents.length);
+      setFileContents(_contents);
+    }
+  };
+
+  const unmountFile = (clearInput = true) => {
+    if (clearInput && inputRef.current) {
       inputRef.current.value = '';
     }
+    setZip(undefined);
+    setZipFileNames([]);
     setFileHash('');
     setFileName('');
     setFileSize(0);
@@ -50,6 +90,16 @@ export function FileSystem2View() {
 
   return (
     <Container>
+      {
+        zip && zipFileNames.length &&
+        <ZipFilesContainer>
+          {zipFileNames.map(zipFileName => {
+            return (
+              <ClickableDiv key={zipFileName} onClick={() => mountZipFile(zipFileName)}>{zipFileName}</ClickableDiv>
+            );
+          })}
+        </ZipFilesContainer>
+      }
       <EditorContainer>
         <div>
           <button onClick={showFileSelector}>텍스트 파일 선택</button>
@@ -59,7 +109,7 @@ export function FileSystem2View() {
         <div>{fileHash}</div>
         <TextArea readOnly value={fileContents} />
         <EditorFooter>
-          <button disabled={!fileName} onClick={unmountFile}>언마운트</button>
+          <button disabled={!fileName} onClick={() => unmountFile()}>언마운트</button>
         </EditorFooter>
       </EditorContainer>
     </Container>
@@ -70,6 +120,11 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   height: 600px;
+`;
+
+const ZipFilesContainer = styled.div`
+  width: 200;
+  flex: none;
 `;
 
 const EditorContainer = styled.div`
@@ -93,4 +148,8 @@ const EditorFooter = styled.div`
 
 const HiddenInput = styled.input`
   display: none;
+`;
+
+const ClickableDiv = styled.div`
+  cursor: pointer;
 `;
