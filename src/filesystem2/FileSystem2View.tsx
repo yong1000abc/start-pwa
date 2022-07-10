@@ -50,17 +50,15 @@ export function FileSystem2View() {
           const _zipFileNames = zipFiles.map(file => file.name);
           setZip(_zip);
           setZipFileNames(_zipFileNames);
-          mountZipFile(_zipFileNames[0]);
+          mountZipFile(_zipFileNames[0], _zip);
         });
       break;
     }
   };
 
-  const mountZipFile = async (_zipFileName: string) => {
-    console.log(_zipFileName);
-    const _contents = await zip?.file(_zipFileName)?.async('string');
+  const mountZipFile = async (_zipFileName: string, _zip?: JSZip) => {
+    const _contents = await (_zip ?? zip)?.file(_zipFileName)?.async('string');
     if (_contents) {
-      console.log(_contents);
       const _fileHash = await digestMessage(_contents);
       setFileHash(_fileHash);
       setFileName(_zipFileName);
