@@ -57,8 +57,10 @@ export function FileSystem2View() {
   };
 
   const mountZipFile = async (_zipFileName: string) => {
+    console.log(_zipFileName);
     const _contents = await zip?.file(_zipFileName)?.async('string');
     if (_contents) {
+      console.log(_contents);
       const _fileHash = await digestMessage(_contents);
       setFileHash(_fileHash);
       setFileName(_zipFileName);

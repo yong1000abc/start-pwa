@@ -5,6 +5,8 @@ const webpack = require('webpack');
 const {version: appVersion} = require('./package.json');
 const Dotenv = require('dotenv-webpack');
 
+const mode = process.env.mode || 'development';
+
 module.exports = (option) => {
   if (!option) option = {};
 
@@ -49,11 +51,13 @@ module.exports = (option) => {
         inject: false,
         templateParameters: {
           version: appVersion,
+          mode,
         },
       }),
       new MiniCssExtractPlugin(),
       new webpack.EnvironmentPlugin({
-        version: appVersion
+        version: appVersion,
+        mode,
       }),
       new Dotenv({ systemvars: true }),
     ],
